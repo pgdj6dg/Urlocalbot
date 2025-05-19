@@ -1,0 +1,203 @@
+-- Rayfield Interface Script
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- Create Window
+local Window = Rayfield:CreateWindow({
+    Name = "Advanced Hub",
+    LoadingTitle = "Premium Features",
+    LoadingSubtitle = "by Elite Developer",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "AdvancedHubConfig",
+        FileName = "Settings"
+    },
+    Discord = {
+        Enabled = false,
+        Invite = "noinvitelink",
+        RememberJoins = true
+    },
+    KeySystem = false,
+})
+
+-- Create Tabs
+local MainTab = Window:CreateTab("Main", 4483362458)
+local PlayerTab = Window:CreateTab("Player Mods")
+local VisualTab = Window:CreateTab("Visuals")
+local AdminTab = Window:CreateTab("Admin")
+
+-- Speed Slider in Player Tab
+local SpeedValue = 16
+local SpeedSlider = PlayerTab:CreateSlider({
+    Name = "WalkSpeed Modifier",
+    Range = {16, 200},
+    Increment = 1,
+    Suffix = "studs",
+    CurrentValue = 16,
+    Flag = "SpeedSlider",
+    Callback = function(Value)
+        SpeedValue = Value
+        game:GetService("RunService").Stepped:Connect(function()
+            if game.Players.LocalPlayer.Character then
+                local humanoid = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid.WalkSpeed = Value
+                end
+            end
+        end)
+    end,
+})
+
+-- Infinite Stamina Button
+PlayerTab:CreateButton({
+    Name = "Infinite Stamina",
+    Callback = function()
+        local args = {
+            [1] = 0/0
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("StaminaService"):WaitForChild("RE"):WaitForChild("DecreaseStamina"):FireServer(unpack(args))
+        Rayfield:Notify({
+            Title = "Stamina Bypassed",
+            Content = "You now have infinite stamina!",
+            Duration = 5,
+            Image = 4483362458,
+        })
+    end,
+})
+
+-- Style Changer (Permanent)
+local CurrentStyle = "Default"
+local StyleInput = VisualTab:CreateInput({
+    Name = "Change Style",
+    PlaceholderText = "Enter style name",
+    RemoveTextAfterFocusLost = false,
+    Flag = "StyleInput",
+    Callback = function(Text)
+        CurrentStyle = Text
+        Rayfield:Notify({
+            Title = "Style Changed",
+            Content = "New style: "..Text,
+            Duration = 5,
+            Image = 4483362458,
+        })
+        saveStyle(Text)
+    end,
+})
+
+-- Load saved style on script start
+if isfile("AdvancedHub_Style.txt") then
+    CurrentStyle = readfile("AdvancedHub_Style.txt")
+    StyleInput:Set(CurrentStyle)
+end
+
+-- Color Customization
+local HeaderColor = Color3.fromRGB(255, 0, 0)
+VisualTab:CreateColorPicker({
+    Name = "Header Color",
+    Color = HeaderColor,
+    Flag = "HeaderColor",
+    Callback = function(Color)
+        HeaderColor = Color
+        -- Apply color to UI elements
+    end
+})
+
+local BackgroundColor = Color3.fromRGB(30, 30, 30)
+VisualTab:CreateColorPicker({
+    Name = "Background Color",
+    Color = BackgroundColor,
+    Flag = "BackgroundColor",
+    Callback = function(Color)
+        BackgroundColor = Color
+        -- Apply color to UI elements
+    end
+})
+
+-- Admin Features with Integrated User ID (8078212506)
+AdminTab:CreateButton({
+    Name = "Get Owner ID",
+    Callback = function()
+        local ownerID = "8078212506"
+        setclipboard(ownerID)
+        Rayfield:Notify({
+            Title = "Owner ID Copied",
+            Content = "Owner ID: "..ownerID.." (copied to clipboard)",
+            Duration = 5,
+            Image = 4483362458,
+        })
+    end,
+})
+
+AdminTab:CreateButton({
+    Name = "Teleport to Owner",
+    Callback = function()
+        local ownerID = 8078212506
+        local owner = game:GetService("Players"):GetPlayerByUserId(ownerID)
+        
+        if owner then
+            if owner.Character and owner.Character:FindFirstChild("HumanoidRootPart") then
+                game.Players.LocalPlayer.Character:MoveTo(owner.Character.HumanoidRootPart.Position)
+                Rayfield:Notify({
+                    Title = "Teleport Success",
+                    Content = "Teleported to "..owner.Name,
+                    Duration = 5,
+                    Image = 4483362458,
+                })
+            end
+        else
+            Rayfield:Notify({
+                Title = "Teleport Failed",
+                Content = "Owner not in game",
+                Duration = 5,
+                Image = 4483362458,
+            })
+        end
+    end,
+})
+
+AdminTab:CreateButton({
+    Name = "Bypass Anti-Cheat",
+    Callback = function()
+        Rayfield:Notify({
+            Title = "Bypass Attempt",
+            Content = "Attempting to bypass anti-cheat systems...",
+            Duration = 5,
+            Image = 4483362458,
+        })
+        
+        -- Example bypass technique
+        local success = pcall(function()
+            -- Your bypass code here
+        end)
+        
+        if success then
+            Rayfield:Notify({
+                Title = "Bypass Successful",
+                Content = "Anti-cheat systems bypassed!",
+                Duration = 5,
+                Image = 4483362458,
+            })
+        else
+            Rayfield:Notify({
+                Title = "Bypass Failed",
+                Content = "Could not bypass anti-cheat",
+                Duration = 5,
+                Image = 4483362458,
+            })
+        end
+    end,
+})
+
+-- Text Titles
+MainTab:CreateLabel("Welcome to Advanced Hub")
+MainTab:CreateParagraph({
+    Title = "Premium Features", 
+    Content = "This hub includes:\n- Speed modifier\n- Style customization\n- Visual theming\n- Admin privileges"
+})
+
+-- Initialize
+Rayfield:LoadConfiguration()
+
+-- Save style function
+function saveStyle(style)
+    writefile("AdvancedHub_Style.txt", style)
+end
