@@ -1,181 +1,172 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "🔥 TzeLol's ULTIMATE GAG Hack 🔥",
-   LoadingTitle = "TzeLol's Premium Garden Control",
-   LoadingSubtitle = "Dominate Grow a Garden - July 2025 Meta",
+   Name = "🌿 TzeLol's ULTIMATE Garden Hax 🌿",
+   LoadingTitle = "Loading Premium Garden Suite...",
+   LoadingSubtitle = "Dominate Grow a Garden!",
    ConfigurationSaving = {
       Enabled = true,
-      FolderName = "TzeLol_GAG_GodMode",
+      FolderName = "TzeLolGODMODE",
       FileName = "UltimateConfig"
    },
-   KeySystem = false,
 })
 
--- Player Tab (User Info + Speed)
-local PlayerTab = Window:CreateTab("Player", 6023426923) -- User icon
-local player = game.Players.LocalPlayer
+-- Player Info Tab
+local PlayerTab = Window:CreateTab("👤 Player", 0)
+PlayerTab:CreateLabel("User: "..game.Players.LocalPlayer.Name)
+PlayerTab:CreateLabel("UserID: "..game.Players.LocalPlayer.UserId)
 
-PlayerTab:CreateSection("Player Info")
-PlayerTab:CreateLabel("👤 "..player.Name.." (ID: "..player.UserId..")")
-
-PlayerTab:CreateSection("Movement")
-local SpeedSlider = PlayerTab:CreateSlider({
+-- SPEED HAX
+PlayerTab:CreateSlider({
    Name = "⚡ Speed Multiplier",
    Range = {16, 1000},
-   Increment = 5,
-   Suffix = "speed",
+   Increment = 10,
    CurrentValue = 16,
-   Flag = "SpeedValue",
    Callback = function(Value)
-      player.Character:WaitForChild("Humanoid").WalkSpeed = Value
-   end,
+      game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+   end
 })
 
--- 🌱 S-Tier Rare Seeds Tab
-local SeedsTab = Window:CreateTab("🌱 Divine Seeds", 6022668888)
-
-local DivineSeeds = SeedsTab:CreateDropdown({
-   Name = "🔮 Select GOD-TIER Seed",
-   Options = {
-      "Bone Blossom", -- Transcendent (21 Dino Quests)
-      "Candy Blossom", -- Divine (Easter Event)
-      "Moon Blossom", -- Divine (Lunar Event)
-      "Giant Pinecone", -- Prismatic (55M Sheckles)
-      "Sugar Apple", -- Prismatic (25M Sheckles)
-      "Beanstalk", -- Prismatic (10M Sheckles)
-      "Dragon Pepper", -- Divine (Craftable)
-      "Fossilight", -- Divine (Ancient Pack)
-      "Elephant Ears", -- Prismatic (0.5% Summer Pack)
-      "Honeysuckle", -- Mythical
-      "Ember Lily", -- Prismatic
-      "Blood Banana" -- Mythical (Blood Moon)
+-- ULTIMATE SEED SPAWNER
+local SeedTab = Window:CreateTab("🌱 Seeds", 0)
+local SeedCategories = {
+   ["💎 S-Tier (BEST)"] = {
+      "Bone Blossom", "Candy Blossom", "Moon Blossom", 
+      "Giant Pinecone", "Sugar Apple", "Beanstalk", "Dragon Pepper"
    },
-   CurrentOption = "Bone Blossom",
-   Flag = "DivineSeed",
-})
-
-SeedsTab:CreateButton({
-   Name = "✨ Spawn Selected Divine Seed",
-   Callback = function()
-      local seed = Rayfield.Flags["DivineSeed"].CurrentOption
-      -- Replace with actual event:
-      game:GetService("ReplicatedStorage").SeedEvents.DivineSpawn:FireServer(seed)
-   end,
-})
-
--- ⚡ Weather God Tab
-local WeatherTab = Window:CreateTab("⚡ Weather God", 6023426923)
-
-local WeatherEvents = WeatherTab:CreateDropdown({
-   Name = "🌪️ Force Weather Event",
-   Options = {
-      "Thunderstorm", -- 100x Shocked mutation
-      "Frost", -- Chilled/Frozen mutations
-      "Blood Moon", -- Bloodlit (4x)
-      "Meteor Shower", -- Celestial (120x)
-      "Heatwave", -- Sundried (85x)
-      "Tropical Rain", -- Drenched (5x)
-      "Aurora", -- 50% growth + Aurora mutation
-      "Sandstorm", -- Sandy mutation
-      "Bee Swarm", -- Pollinated (3x)
-      "Working Bee Swarm", -- 10x craft speed
-      "Drought", -- Wilt mutation
-      "Windy" -- Windstruck (2x)
+   ["🔥 A-Tier"] = {
+      "Fossilight", "Elephant Ears", "Honeysuckle", 
+      "Ember Lily", "Blood Banana"
    },
-   CurrentOption = "Thunderstorm",
-   Flag = "WeatherEvent",
-   Callback = function(Value)
-      -- Replace with actual event:
-      game:GetService("ReplicatedStorage").WeatherEvents.Override:FireServer(Value)
-   end,
-})
+   ["⭐ B-Tier"] = {
+      "Mango", "Dragon Fruit", "Cactus", 
+      "Pineapple", "Coconut"
+   },
+   ["🎪 Limited Events"] = {
+      "Chocolate Carrot", "Starfruit", "Moonglow", 
+      "Firefly Fern", "Hive Fruit"
+   }
+}
 
--- 💰 Sheckles Generator Tab
-local MoneyTab = Window:CreateTab("💰 Sheckles God", 6023426923)
-
-MoneyTab:CreateInput({
-   Name = "💎 Set Sheckles Amount",
-   PlaceholderText = "Max safe: 999,999,999",
-   RemoveTextAfterFocusLost = false,
-   Callback = function(Text)
-      local amount = tonumber(Text)
-      if amount then
-         -- Replace with actual event:
-         game:GetService("ReplicatedStorage").CurrencyEvents.SetSheckles:FireServer(amount)
+for category, seeds in pairs(SeedCategories) do
+   SeedTab:CreateDropdown({
+      Name = category.." Seeds",
+      Options = seeds,
+      CurrentOption = seeds[1],
+      Callback = function(Option)
+          -- Replace with actual seed spawn function
+          game.ReplicatedStorage.SeedEvent:FireServer(Option, "Rare")
       end
-   end,
+   })
+end
+
+-- WEATHER GOD MODE
+local WeatherTab = Window:CreateTab("🌦️ Weather Control", 0)
+local WeatherEffects = {
+   ["💰 Profit Boosters"] = {
+      {Name = "Thunderstorm", Desc = "100x Shocked mutation + 50% growth"},
+      {Name = "Meteor Shower", Desc = "120x Celestial mutation"},
+      {Name = "Heatwave", Desc = "85x Sundried mutation"},
+      {Name = "Tropical Rain", Desc = "5x Drenched + 50% growth"}
+   },
+   ["🌙 Night Events"] = {
+      {Name = "Blood Moon", Desc = "4x Bloodlit mutation"},
+      {Name = "Night", Desc = "2x Moonlit mutation"}
+   },
+   ["❄️ Cold Effects"] = {
+      {Name = "Frost", Desc = "2x Chilled + Frozen combo"},
+      {Name = "Aurora", Desc = "50% growth + rare mutations"}
+   }
+}
+
+for category, weathers in pairs(WeatherEffects) do
+   local options = {}
+   for _, w in pairs(weathers) do
+       table.insert(options, w.Name)
+   end
+   
+   WeatherTab:CreateDropdown({
+      Name = category,
+      Options = options,
+      CurrentOption = options[1],
+      Callback = function(Option)
+          -- Activate weather
+          game.ReplicatedStorage.WeatherEvent:FireServer(Option)
+          
+          -- Show details
+          for _, w in pairs(weathers) do
+              if w.Name == Option then
+                  Rayfield:Notify({
+                     Title = "🌍 "..Option.." Activated",
+                     Content = w.Desc,
+                     Duration = 8,
+                  })
+              end
+          end
+      end
+   })
+end
+
+-- AUTO-FARM SYSTEM
+local FarmTab = Window:CreateTab("🤖 Auto-Farm", 0)
+FarmTab:CreateToggle({
+   Name = "🌧️ Auto-Water Plants",
+   CurrentValue = false,
+   Callback = function(Value)
+      -- Auto-water logic here
+   end
+})
+
+FarmTab:CreateToggle({
+   Name = "⚡ Auto-Collect Mutations",
+   CurrentValue = false,
+   Callback = function(Value)
+      -- Auto-collect logic
+   end
+})
+
+FarmTab:CreateButton({
+   Name = "🌀 INSTANT HARVEST ALL",
+   Callback = function()
+      -- Mass harvest function
+   end
+})
+
+-- SHEKELS GENERATOR
+local MoneyTab = Window:CreateTab("💰 Sheckles", 0)
+MoneyTab:CreateInput({
+   Name = "💵 Set Sheckles Amount",
+   PlaceholderText = "Max safe: 9,999,999",
+   Callback = function(Text)
+      local amount = math.min(tonumber(Text) or 0, 9999999)
+      game.ReplicatedStorage.CurrencyEvent:FireServer("Sheckles", amount)
+   end
 })
 
 MoneyTab:CreateButton({
-   Name = "🤑 Auto Max Sheckles (999M)",
+   Name = "🤑 MAX OUT SHEKELS (Safe)",
    Callback = function()
-      -- Replace with actual event:
-      game:GetService("ReplicatedStorage").CurrencyEvents.SetSheckles:FireServer(999999999)
-   end,
+      game.ReplicatedStorage.CurrencyEvent:FireServer("Sheckles", 9999999)
+   end
 })
 
--- 🧪 Mutation Master Tab
-local MutationTab = Window:CreateTab("🧪 Mutation Lab", 6023426923)
-
-local Mutations = MutationTab:CreateDropdown({
-   Name = "🧬 Force Mutations",
-   Options = {
-      "Wet (2x)", 
-      "Shocked (100x)",
-      "Chilled (2x)",
-      "Frozen (10x)",
-      "Moonlit (2x)",
-      "Celestial (120x)",
-      "Bloodlit (4x)",
-      "Sundried (85x)",
-      "Drenched (5x)",
-      "Aurora",
-      "Sandy",
-      "Pollinated (3x)"
-   },
-   CurrentOption = "Shocked (100x)",
-   Flag = "MutationType",
+-- MUTATION BOOSTER
+local MutationTab = Window:CreateTab("🧬 Mutations", 0)
+MutationTab:CreateDropdown({
+   Name = "✨ Force Mutation",
+   Options = {"Wet (2x)", "Frozen (10x)", "Shocked (100x)", 
+              "Celestial (120x)", "Bloodlit (4x)", "Drenched (5x)"},
+   Callback = function(Option)
+      -- Apply mutation to all plants
+   end
 })
 
-MutationTab:CreateButton({
-   Name = "⚗️ Apply to ALL Plants",
-   Callback = function()
-      local mutation = string.split(Rayfield.Flags["MutationType"].CurrentOption, " ")[1]
-      -- Replace with actual event:
-      game:GetService("ReplicatedStorage").MutationEvents.ForceAll:FireServer(mutation)
-   end,
-})
-
--- 🤖 Auto Farm Tab
-local FarmTab = Window:CreateTab("🤖 Auto Farm", 6023426923)
-
-FarmTab:CreateToggle({
-   Name = "🌱 Auto-Plant Divine Seeds",
+MutationTab:CreateToggle({
+   Name = "🔮 Lock Current Mutations",
    CurrentValue = false,
-   Flag = "AutoPlant",
    Callback = function(Value)
-      -- Add auto-plant function
-   end,
+      -- Prevent mutation changes
+   end
 })
 
-FarmTab:CreateToggle({
-   Name = "💧 Auto-Water (Instant Growth)",
-   CurrentValue = false,
-   Flag = "AutoWater",
-   Callback = function(Value)
-      -- Add auto-water function
-   end,
-})
-
-FarmTab:CreateToggle({
-   Name = "🌀 Auto-Collect Mutations",
-   CurrentValue = false,
-   Flag = "AutoCollect",
-   Callback = function(Value)
-      -- Add auto-collect function
-   end,
-})
-
--- Load UI
 Rayfield:LoadConfiguration()
